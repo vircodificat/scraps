@@ -1,3 +1,3 @@
 #!/bin/bash
 
-gdb-multiarch -x gdbinit build/vmlinux
+gdb-multiarch -x gdbinit

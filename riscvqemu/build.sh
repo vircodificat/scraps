@@ -2,41 +2,155 @@
 
 set -xe
 
-mkdir -p build
-mkdir -p sysroot
-
-git clone $REPOS/linux --depth=1 --branch=v6.16
-cd linux
+LINUX_COMMIT=v6.16
+BUSYBOX_COMMIT=1_34_stable
+UBOOT_COMMIT=v2025.04
+OPENSBI_COMMIT=v1.7
+BUILDROOT_COMMIT=2025.05.1
 
 export ARCH=riscv
 export CROSS_COMPILE=riscv64-linux-gnu-
 
-make tinyconfig
+cd "$(dirname "${BASH_SOURCE[0]}")"
 
-cd ..
+mkdir -p build
+mkdir -p sysroot
 
-cp linux/.config .config
-cp .config .config.tiny
-patch -p0 < config.diff
-cp .config linux/
-cd linux
+ls $(which "$CROSS_COMPILE-gcc") # ensure gcc exists
 
-make -j
-make -j vmlinux
+function download_git_repos() {
+    if [ ! -d linux ]; then
+        url="https://github.com/torvalds/linux"
+        git clone $url --depth=1 --branch=$LINUX_COMMIT --filter=blob:none
+    else
+        git -C linux   checkout $LINUX_COMMIT
+    fi
 
-ls \
-    arch/riscv/boot/Image \
-    arch/riscv/boot/Image.xz \
-    vmlinux
+    if [ ! -d busybox ]; then
+        url="https://git.busybox.net/busybox"
+        git clone $url --depth=1 --branch=$BUSYBOX_COMMIT --filter=blob:none
+    else
+        git -C busybox checkout $BUSYBOX_COMMIT
+    fi
 
-cp arch/riscv/boot/Image ../build/.
-cp arch/riscv/boot/Image.xz ../build/.
-cp vmlinux ../build/.
+    if [ ! -d u-boot ]; then
+        url="https://github.com/u-boot/u-boot"
+        git clone $url --depth=1 --branch=$UBOOT_COMMIT --filter=blob:none
+    else
+        git -C u-boot  checkout $UBOOT_COMMIT
+    fi
 
-cd ..
+    if [ ! -d opensbi ]; then
+        url="https://github.com/riscv-software-src/opensbi"
+        git clone $url --depth=1 --branch=$OPENSBI_COMMIT --filter=blob:none
+    else
+        git -C opensbi checkout $OPENSBI_COMMIT
+    fi
 
-riscv64-linux-gnu-gcc -static -o sysroot/sbin/init init.c
+    if [ ! -d buildroot ]; then
+        url="https://github.com/buildroot/buildroot"
+        git clone $url --depth=1 --branch=$BUILDROOT_COMMIT --filter=blob:none
+    else
+        git -C buildroot checkout $BUILDROOT_COMMIT
+    fi
 
-cd sysroot
+}
 
-find . | cpio -o -H newc > ../build/init.cpio
+function build_buildroot() {
+    cp configs/buildroot.config buildroot/.config
+    cd buildroot
+
+    make sdk -j 10
+
+    cd ..
+}
+
+function build_linux() {
+    cd linux
+
+    make tinyconfig
+    patch -p0 < ../configs/linux.config.diff
+    make -j
+    make -j vmlinux
+
+    cp \
+        arch/riscv/boot/Image \
+        arch/riscv/boot/Image.xz \
+        vmlinux \
+        ../build/
+
+    cd ..
+}
+
+function build_busybox() {
+    cp configs/busybox.config busybox/.config
+
+    cd busybox
+
+    make -j
+
+    cp \
+        busybox \
+        busybox_unstripped \
+        ../build/
+
+    cd ..
+}
+
+function build_uboot() {
+    cd u-boot
+
+    make qemu-riscv64_smode_defconfig
+    make -j
+
+    cp \
+        u-boot \
+        u-boot.bin \
+        ../build/
+
+    cd ..
+}
+
+function build_opensbi() {
+    cd opensbi
+
+    make PLATFORM=generic -j FW_PAYLOAD_PATH=../build/u-boot.bin FW_TEXT_START=0x80000000
+
+    cp \
+        build/platform/generic/firmware/fw_payload.elf \
+        build/platform/generic/firmware/fw_payload.bin \
+        build/platform/generic/firmware/fw_dynamic.elf \
+        build/platform/generic/firmware/fw_dynamic.bin \
+        build/platform/generic/firmware/fw_jump.elf \
+        build/platform/generic/firmware/fw_jump.bin \
+        ../build/
+
+    cd ..
+}
+
+function build_os1k() {
+    cd os1k
+
+    make
+
+    cp \
+        build/os1k.elf \
+        ../build/
+
+    cd ..
+}
+
+function build_sysroot() {
+    cd sysroot
+    find . | cpio -o -H newc > ../build/init.cpio
+    cd ..
+}
+
+download_git_repos
+build_buildroot
+build_linux
+build_busybox
+build_uboot
+build_opensbi
+build_os1k
+build_sysroot
