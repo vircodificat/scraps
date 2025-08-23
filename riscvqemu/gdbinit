@@ -1,0 +1,7 @@
+target remote :1234
+set architecture riscv:rv64
+break *0x80000000
+#break *0x80200000
+break kernel_init
+break try_to_run_init_process
+break panic
