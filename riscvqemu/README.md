@@ -101,8 +101,6 @@ Very cool!
 
 When you run `qemu-system-riscv64`, the default behavior is to bring up the system using an built-in version of OpenSBI.
 You can use the `-bios` flag to replace it with a different bios firmware.
-(I'm trying to get a new version of OpenSBI builting from source, but while it loads,
-it doesn't seem to give me the ability to use the debug console).
 
 ## Extra
 

@@ -7,6 +7,7 @@ qemu-system-riscv64 \
     -machine virt \
     -m 1G \
     --no-reboot \
+    -bios build/fw_jump.bin \
     -dtb virt.dtb \
     -kernel build/os1k.elf
 
