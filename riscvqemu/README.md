@@ -73,3 +73,39 @@ And you can't get out of this mode by running any command
 (at least, none that I've found).
 You get out by the hotkey `Ctrl-x a`
 (Annoyingly close to `Ctrl-a x` to quit in QEMU).
+
+## OpenSBI
+
+[SBI](https://drive.google.com/file/d/1RHY5Gj0cDSrY5BlK6pGblZt03fDRF2-g/view), or Supervisor Binary Interface,
+is the equivalent of BIOS for RISC-V.
+The standard implementation is called OpenSBI: https://github.com/riscv-software-src/opensbi
+
+I'm mostly following along with the following guide:
+
+https://popovicu.com/posts/risc-v-sbi-and-full-boot-process/
+
+OpenSBI loads at `0x8000_0000` (the start of physical RAM in most systems)
+and eventually dispatches to the operating system kernel, starting at `0x8020_0000`.
+It starts off in M-mode, but drops into S-mode before doing so.
+
+It seems the system is meant to supply the following to SBI:
+
+* the hartid in `a0`
+* a pointer to the device tree in `a1`
+
+Then, SBI sets up the `mtvec` so that it can respond to `ecall`s from the kernel.
+These provide basic BIOS functionality, such as a debug console (DBCN) and system reset (SRST).
+(I thought it was cute that the value of the Extension ID (EID), such as DBCN,
+is given the hex value of the ASCII bytes that spell out the command.
+Very cool!
+
+When you run `qemu-system-riscv64`, the default behavior is to bring up the system using an built-in version of OpenSBI.
+You can use the `-bios` flag to replace it with a different bios firmware.
+(I'm trying to get a new version of OpenSBI builting from source, but while it loads,
+it doesn't seem to give me the ability to use the debug console).
+
+## Extra
+
+* https://risc-v-machines.readthedocs.io/en/latest/linux/simple/
+* https://docs.u-boot.org/en/latest/learn/talks.html
+* https://github.com/mit-pdos/xv6-riscv
