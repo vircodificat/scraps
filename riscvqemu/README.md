@@ -102,6 +102,23 @@ Very cool!
 When you run `qemu-system-riscv64`, the default behavior is to bring up the system using an built-in version of OpenSBI.
 You can use the `-bios` flag to replace it with a different bios firmware.
 
+
+## U-Boot
+
+Some useful U-Boot commands:
+
+`bdinfo` prints the board information.
+
+`ls virtio 0:1` will list the files on device 0 partition 1 of the virtio bus.
+`load virtio 0:1 0x80200000 /hello.txt` will load `hello.txt` at the address `0x80200000`.
+
+`md.b 0x80200000 0x40` will read (memory display).
+`mw.b 0x80200007 0x0` will write to the memory.
+
+`fdt print` and `fdt addr` print the device tree and give its address in memory.
+
+`cls` clears the screen.
+
 ## Extra
 
 * https://risc-v-machines.readthedocs.io/en/latest/linux/simple/

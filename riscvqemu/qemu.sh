@@ -9,8 +9,13 @@ qemu-system-riscv64 \
     --no-reboot \
     -bios build/fw_jump.bin \
     -dtb virt.dtb \
-    -kernel build/os1k.elf
+    -drive file=./disk.img,format=raw,id=hd0 \
+    -kernel build/u-boot.bin \
 
+#    -s -S \
+#    -device virtio-mouse-pci,bus=pcie.0 \
+#    -device virtio-net-device,netdev=net0 \
+#    -netdev user,id=net0 \
 #    -kernel build/u-boot.bin \
 #    -initrd build/init.cpio \
 #    -append "init=/sbin/init" \
