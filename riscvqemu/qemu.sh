@@ -3,12 +3,13 @@
 
 qemu-system-riscv64 \
     -nographic \
+    -smp 1 \
     -machine virt \
     -m 1G \
-    -kernel build/os1k.elf \
-    -s -S
+    --no-reboot \
+    -dtb virt.dtb \
+    -kernel build/os1k.elf
 
-#    -bios build/fw_payload.bin \
 #    -kernel build/u-boot.bin \
 #    -initrd build/init.cpio \
 #    -append "init=/sbin/init" \

@@ -20,6 +20,8 @@ We then run the emulator with `./qemu.sh`.
 The `-kernel` flag loads `build/Image` at the standard kernel address `0x8020_0000`.
 The `-initrd` flag loads the `build/init.cpio` file at `0x84200000` (I think).
 (The device tree seems to live at `0x87e00000`).
+(Or is it `0xbfe00000` when passed with `-dtb`).
+
 
 DON'T FORGET YOU CAN EXIT QEMU WITH: `Ctrl+A X`
 
@@ -38,3 +40,36 @@ When I couldn't get Linux or U-Boot to boot, I tried a smoke test using a stripp
 https://operating-system-in-1000-lines.vercel.app
 
 See `os1k`.
+
+## Device Tree
+
+You can dump the device tree for QEMU `virt` with:
+
+```console
+$ qemu-system-riscv64 \
+  -machine virt \
+  -m 1G \
+  -nographic \
+  -machine dumpdtb=virt.dtb
+```
+
+You can then decompile it with:
+
+```console
+$ dtc -I dtb -O dts virt.dtb > virt.dts
+```
+
+## GDB Tips
+
+You can list the (hardware) threads with `info threads`.
+
+You can switch which thread receives commands with `thread N`.
+HOWEVER -- the threads are 1-indexed, NOT 0-indexed(!!!)
+
+You can switch to the source view with `layout src`.
+The up and down *arrow* keys scroll through the viewport.
+However, you can't copy and paste in this mode for some stupid reason.
+And you can't get out of this mode by running any command
+(at least, none that I've found).
+You get out by the hotkey `Ctrl-x a`
+(Annoyingly close to `Ctrl-a x` to quit in QEMU).

@@ -114,7 +114,7 @@ function build_uboot() {
 function build_opensbi() {
     cd opensbi
 
-    make PLATFORM=generic -j FW_PAYLOAD_PATH=../build/u-boot.bin FW_TEXT_START=0x80000000
+    make PLATFORM=generic FW_TEXT_START=0x80000000 -j10
 
     cp \
         build/platform/generic/firmware/fw_payload.elf \
