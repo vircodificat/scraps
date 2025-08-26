@@ -1,14 +1,15 @@
 target remote :1234
 set architecture riscv:rv64
 
-#file build/vmlinux
-#file build/u-boot
-add-symbol-file build/fw_payload.elf 0x80000000
+add-symbol-file \
+    build/vmlinux 0x80202000 \
+    -s .head.text 0x80200000 \
+    -s .init.text 0x802e1940 \
+    -s .init.data 0x802ff000 \
+    -s .init.pi   0x80309e98 \
+    -s .init.bss  0x8030c788
 
-# This is apparently needed to translate the symbols early on in the load.
-#add-symbol-file build/vmlinux 0xffffffff80000000 -s .head.text 0x80200000
+symbol-file build/vmlinux -o 0x100200000
+file build/vmlinux
 
-file build/os1k.elf
-break kernel_main
-break halt
 break panic
