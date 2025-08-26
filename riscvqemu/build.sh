@@ -6,7 +6,6 @@ LINUX_COMMIT=v6.16
 BUSYBOX_COMMIT=1_34_stable
 UBOOT_COMMIT=v2025.04
 OPENSBI_COMMIT=v1.7
-BUILDROOT_COMMIT=2025.05.1
 
 source build.env.sh
 
@@ -44,23 +43,6 @@ function download_git_repos() {
     else
         git -C opensbi checkout $OPENSBI_COMMIT
     fi
-
-    if [ ! -d buildroot ]; then
-        url="https://github.com/buildroot/buildroot"
-        git clone $url --depth=1 --branch=$BUILDROOT_COMMIT --filter=blob:none
-    else
-        git -C buildroot checkout $BUILDROOT_COMMIT
-    fi
-
-}
-
-function build_buildroot() {
-    cp configs/buildroot.config buildroot/.config
-    cd buildroot
-
-    make sdk -j 10
-
-    cd ..
 }
 
 function build_linux() {
@@ -147,7 +129,6 @@ function build_sysroot() {
 }
 
 download_git_repos
-build_buildroot
 build_linux
 build_busybox
 build_uboot
