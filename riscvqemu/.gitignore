@@ -8,3 +8,5 @@ buildroot/
 sysroot/
 virt.dtb
 virt.dts
+mnt/
+disk.img
