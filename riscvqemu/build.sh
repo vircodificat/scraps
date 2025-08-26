@@ -8,13 +8,11 @@ UBOOT_COMMIT=v2025.04
 OPENSBI_COMMIT=v1.7
 BUILDROOT_COMMIT=2025.05.1
 
-export ARCH=riscv
-export CROSS_COMPILE=riscv64-linux-gnu-
+source build.env.sh
 
 cd "$(dirname "${BASH_SOURCE[0]}")"
 
 mkdir -p build
-mkdir -p sysroot
 
 ls $(which "$CROSS_COMPILE-gcc") # ensure gcc exists
 
@@ -135,6 +133,7 @@ function build_os1k() {
 
     cp \
         build/os1k.elf \
+        build/os1k.bin \
         ../build/
 
     cd ..
@@ -142,6 +141,7 @@ function build_os1k() {
 
 function build_sysroot() {
     cd sysroot
+    find .
     find . | cpio -o -H newc > ../build/init.cpio
     cd ..
 }
