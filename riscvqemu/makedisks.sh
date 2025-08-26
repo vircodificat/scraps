@@ -27,14 +27,18 @@ LOOP=$(losetup --show -f $filename)
 parted \
     --script "$LOOP" \
     mklabel msdos \
-    mkpart primary ext4 1MiB 100% \
-    set 1 boot on
+    mkpart primary fat32 1MiB 32MiB \
+    set 1 boot on \
+    mkpart primary ext4 32MiB 100% \
 
-# This apparently removes support for features U-Boot doesn't work with:
-# -O ^64bit,^metadata_csum,^bigalloc
-mkfs.ext4 -O ^64bit,^metadata_csum,^bigalloc ${LOOP}p1
+mkfs.vfat -F 32 -n BOOT ${LOOP}p1
+mkfs.ext4 -L rootfs ${LOOP}p2
 
 mount ${LOOP}p1 mnt
+cp build/Image mnt/
+umount mnt
+
+mount ${LOOP}p2 mnt
 
 ########################################
 
@@ -43,8 +47,6 @@ mkdir -p mnt/sbin
 
 rm -rf mnt/lost+found
 
-cp build/Image mnt/
-cp virt.dtb mnt/
 #cp build/os1k.elf mnt/
 #cp build/os1k.bin mnt/
 cp build/init.cpio mnt/

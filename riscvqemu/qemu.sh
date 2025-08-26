@@ -9,7 +9,6 @@ qemu-system-riscv64 \
     -m 1G \
     --no-reboot \
     -bios build/fw_jump.bin \
-    -dtb virt.dtb \
     -drive file=./disk.img,format=raw,id=hd0 \
     -kernel build/u-boot.bin \
 

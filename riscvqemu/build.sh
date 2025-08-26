@@ -48,14 +48,13 @@ function download_git_repos() {
 function build_linux() {
     cd linux
 
-    make tinyconfig
-    patch -p0 < ../configs/linux.config.diff
-    make -j
-    make -j vmlinux
+    make defconfig
+#    patch -p0 < ../configs/linux.config.diff
+    make -j 10
+    make -j 10 vmlinux
 
     cp \
         arch/riscv/boot/Image \
-        arch/riscv/boot/Image.xz \
         vmlinux \
         ../build/
 
