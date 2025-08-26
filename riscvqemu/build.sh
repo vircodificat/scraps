@@ -122,6 +122,7 @@ function build_os1k() {
 }
 
 function build_sysroot() {
+    mkdir -p sysroot
     cd sysroot
     find .
     find . | cpio -o -H newc > ../build/init.cpio
