@@ -116,6 +116,10 @@ Some useful U-Boot commands:
 `mw.b 0x80200007 0x0` will write to the memory.
 
 `fdt print` and `fdt addr` print the device tree and give its address in memory.
+Note that there is an environment variable `$fdt_addr_r`
+which represents the address where the DT is expected to be loaded during boot.
+We can use `fdt addr ${fdt_addr_r}` to place it there.
+
 
 `cls` clears the screen.
 
