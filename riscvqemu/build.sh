@@ -78,9 +78,10 @@ function build_busybox() {
 }
 
 function build_uboot() {
+    cp configs/u-boot.config u-boot/.config
     cd u-boot
 
-    make qemu-riscv64_smode_defconfig
+#    make qemu-riscv64_smode_defconfig
     make -j
 
     cp \

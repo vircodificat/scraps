@@ -1,5 +1,6 @@
 #!/bin/bash
 
+cd "$(dirname $(realpath $0))"
 
 qemu-system-riscv64 \
     -nographic \

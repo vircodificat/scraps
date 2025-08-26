@@ -1,1 +1,1 @@
-setenv bootargs 'debug root=/dev/vda1 earlycon=sbi'; load virtio 0:1 0x81000000 virt.dtb; load virtio 0:1 0x80200000 Image; booti 0x80200000 - 0x81000000
+setenv bootargs 'init=/bin/sh debug root=/dev/vda1 earlycon=sbi'; load virtio 0:1 0x81000000 virt.dtb; load virtio 0:1 0x80200000 Image; booti 0x80200000 - 0x81000000
