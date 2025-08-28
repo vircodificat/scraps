@@ -120,11 +120,23 @@ Note that there is an environment variable `$fdt_addr_r`
 which represents the address where the DT is expected to be loaded during boot.
 We can use `fdt addr ${fdt_addr_r}` to place it there.
 
-
 `cls` clears the screen.
+
+See `run.txt` for a few U-Boot command snippets useful for booting.
+
+For some reason, I can get `saveenv` to save the environment to disk,
+but I can't get it to load.
+I get an error `** Bad device specification virtio 0 **`.
+
+I managed to boot the Debian installer and the Debian installation.
+The trick is to use `bootefi` and to be mindful of the partitions.
+(It seemed like I needed to ensure that the first virtio block device was the installer).
+
 
 ## Extra
 
 * https://risc-v-machines.readthedocs.io/en/latest/linux/simple/
 * https://docs.u-boot.org/en/latest/learn/talks.html
 * https://github.com/mit-pdos/xv6-riscv
+* https://blog.stephenmarz.com/
+* https://docs.oasis-open.org/virtio/virtio/v1.1/virtio-v1.1.pdf

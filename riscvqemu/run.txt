@@ -1,1 +1,3 @@
-setenv bootargs 'root=/dev/vda2 rootwait console=ttyS0 earlycon=sbi'; load virtio 0:1 0x80200000 Image; booti 0x80200000 - ${fdtcontroladdr}
+setenv bootargs 'init=/bin/sh root=/dev/vda2 rootwait console=ttyS0 earlycon=sbi'; load virtio 0:1 0x80200000 Image; booti 0x80200000 - ${fdtcontroladdr}
+load virtio 0:2 ${kernel_addr_r} /efi/boot/bootriscv64.efi; bootefi ${kernel_addr_r} ${fdtcontroladdr}
+load virtio 0:1 ${kernel_addr_r} /EFI/debian/grubriscv64.efi; bootefi ${kernel_addr_r} ${fdtcontroladdr}

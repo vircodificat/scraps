@@ -45,6 +45,10 @@ function download_git_repos() {
     fi
 }
 
+function download_debian() {
+    curl -LO https://cdimage.debian.org/debian-cd/current/riscv64/iso-dvd/debian-13.0.0-riscv64-DVD-1.iso
+}
+
 function build_linux() {
     cd linux
 
@@ -81,7 +85,7 @@ function build_uboot() {
     cd u-boot
 
 #    make qemu-riscv64_smode_defconfig
-    make -j
+    make -j 10
 
     cp \
         u-boot \
@@ -130,6 +134,7 @@ function build_sysroot() {
 }
 
 download_git_repos
+download_debian
 build_linux
 build_busybox
 build_uboot

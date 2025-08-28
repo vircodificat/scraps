@@ -2,7 +2,7 @@
 
 qemu_run="/home/$SUDO_USER/.local/qemu/bin/qemu-riscv64"
 filename="disk.img"
-image_size=64
+image_size=512
 
 set -e
 
@@ -44,6 +44,10 @@ mount ${LOOP}p2 mnt
 
 mkdir -p mnt/bin
 mkdir -p mnt/sbin
+mkdir -p mnt/var
+mkdir -p mnt/dev
+mkdir -p mnt/lib
+mkdir -p mnt/usr/local
 
 rm -rf mnt/lost+found
 
